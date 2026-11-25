@@ -1,0 +1,2201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#F5EFE3">
+<title>HABER'S · Muestrario de Telas</title>
+<meta name="description" content="Muestrario de telas HABER'S — catálogo en línea de textiles para hotelería: sábanas, toallas, blancos y más.">
+<meta property="og:title" content="HABER'S · Muestrario de Telas">
+<meta property="og:description" content="Catálogo en línea de textiles para hotelería.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firestore.googleapis.com">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js">
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --oro:#C9962E;
+    --oro-claro:#E6B54A;
+    --estrella:#FFC531;
+    --carbon:#4A4A50;
+    --gris:#8A8578;
+    --fondo:#F5EFE3;
+    --beige:#EFE7D6;
+    --blanco:#FFFDF8;
+    --linea:#E4DBC8;
+    --sombra:0 4px 18px rgba(120,100,60,.10);
+    --radio:14px;
+    --ok:#2E7D46;
+    --error:#B3382C;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Jost',sans-serif;
+    background:var(--fondo);
+    color:var(--carbon);
+    min-height:100vh;
+  }
+  body.bloqueado{overflow:hidden}
+  [hidden]{display:none!important}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  /* ---------- Cabecera ---------- */
+  header{
+    background:var(--blanco);
+    color:var(--carbon);
+    padding:24px 20px 22px;
+    position:relative;
+    overflow:hidden;
+    border-bottom:1px solid var(--linea);
+  }
+  header::after{
+    content:"";
+    position:absolute;left:0;right:0;bottom:0;height:4px;
+    background:repeating-linear-gradient(90deg,var(--oro) 0 14px,var(--oro-claro) 14px 28px);
+  }
+  .header-inner{
+    max-width:1180px;margin:0 auto;
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .marca{display:flex;flex-direction:column;gap:6px}
+  .marca img{height:52px;width:auto;display:block}
+  .marca p{
+    font-size:.78rem;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--gris);
+  }
+  .acciones-header{display:flex;align-items:center;gap:10px}
+  .btn-qr{
+    font-family:'Jost',sans-serif;
+    background:var(--oro);color:#FFFDF8;
+    border:none;border-radius:999px;
+    padding:11px 22px;font-size:.9rem;font-weight:600;letter-spacing:.06em;
+    cursor:pointer;display:inline-flex;align-items:center;gap:8px;
+    transition:transform .18s ease, background .18s ease;
+  }
+  .btn-qr:hover{background:var(--oro-claro);transform:translateY(-1px)}
+  .btn-qr:focus-visible{outline:3px solid var(--oro-claro);outline-offset:3px}
+  .btn-usuario{
+    width:40px;height:40px;border-radius:50%;
+    border:1px solid var(--linea);background:transparent;
+    font-size:1.05rem;line-height:1;cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;
+    opacity:.45;transition:opacity .2s ease;
+  }
+  .btn-usuario:hover,.btn-usuario:focus-visible{opacity:1}
+  .btn-usuario:focus-visible{outline:3px solid var(--oro-claro);outline-offset:2px}
+  .btn-usuario.ocupado{cursor:progress}
+
+  /* ---------- Buscador ---------- */
+  .barra-busqueda{
+    position:sticky;top:0;z-index:40;
+    background:rgba(245,239,227,.92);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--linea);
+    padding:14px 20px;
+  }
+  .busqueda-inner{max-width:1180px;margin:0 auto;display:flex;gap:12px;align-items:center}
+  .campo{flex:1;position:relative}
+  .campo svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:18px;height:18px;stroke:var(--gris)}
+  .campo input{
+    width:100%;
+    font-family:'Jost',sans-serif;font-size:1rem;
+    padding:13px 18px 13px 46px;
+    border:1px solid var(--linea);border-radius:999px;
+    background:var(--blanco);color:var(--carbon);
+    box-shadow:var(--sombra);
+    transition:border-color .18s ease;
+  }
+  .campo input:focus{outline:none;border-color:var(--oro)}
+  .contador{font-size:.85rem;color:var(--gris);white-space:nowrap}
+  .contador b{color:var(--carbon)}
+
+  /* ---------- Grid de tarjetas ---------- */
+  main{max-width:1180px;margin:0 auto;padding:26px 20px 60px}
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(250px,1fr));
+    gap:22px;
+  }
+  .tarjeta{
+    background:var(--blanco);
+    border-radius:var(--radio);
+    box-shadow:var(--sombra);
+    overflow:hidden;
+    display:flex;flex-direction:column;
+    transition:transform .2s ease, box-shadow .2s ease;
+    content-visibility:auto;
+    contain-intrinsic-size:250px 360px;
+  }
+  .tarjeta:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(120,100,60,.16)}
+  .foto{
+    position:relative;
+    aspect-ratio:4/3;
+    background:var(--beige);
+    overflow:hidden;
+  }
+  .foto.ampliable{cursor:zoom-in}
+  .foto img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    opacity:0;transition:opacity .3s ease;
+  }
+  .foto img.lista{opacity:1}
+  .foto .sin-imagen{
+    position:absolute;inset:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+    background:
+      repeating-linear-gradient(45deg,transparent 0 9px,rgba(38,38,43,.028) 9px 18px),
+      repeating-linear-gradient(-45deg,transparent 0 9px,rgba(38,38,43,.028) 9px 18px),
+      var(--beige);
+    color:var(--gris);
+  }
+  .sin-imagen .mono{
+    font-family:'Marcellus',serif;font-size:2.1rem;color:var(--oro);
+    border:1.5px solid var(--oro);border-radius:50%;
+    width:58px;height:58px;display:flex;align-items:center;justify-content:center;
+  }
+  .sin-imagen small{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase}
+  .insignia-serie{
+    position:absolute;top:12px;left:12px;
+    background:#FFFDF8;color:var(--oro);
+    border:1px solid var(--linea);
+    font-family:'Marcellus',serif;font-size:.85rem;letter-spacing:.06em;
+    padding:5px 13px;border-radius:999px;
+    box-shadow:0 2px 8px rgba(120,100,60,.18);
+  }
+  .info{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+  .info h2{
+    font-family:'Marcellus',serif;
+    font-size:1.15rem;font-weight:400;line-height:1.25;
+  }
+  .info .color{font-size:.92rem;color:var(--gris)}
+  .estrellas{
+    color:var(--estrella);
+    font-size:1.08rem;letter-spacing:2px;
+    text-shadow:0 1px 1px rgba(0,0,0,.12);
+    min-height:1.2em;
+  }
+  .detalles{
+    margin-top:auto;padding-top:12px;
+    border-top:1px solid var(--linea);
+    display:flex;justify-content:space-between;gap:10px;
+    font-size:.85rem;color:var(--gris);
+  }
+  .detalles b{display:block;color:var(--carbon);font-weight:500;font-size:.95rem}
+
+  /* ---------- Estados y centinela de scroll ---------- */
+  .estado{
+    text-align:center;padding:70px 20px;color:var(--gris);
+    grid-column:1/-1;
+  }
+  .estado .aguja{
+    width:44px;height:44px;margin:0 auto 16px;
+    border:3px solid var(--linea);border-top-color:var(--oro);
+    border-radius:50%;animation:girar 1s linear infinite;
+  }
+  @keyframes girar{to{transform:rotate(360deg)}}
+  .estado h3{font-family:'Marcellus',serif;color:var(--carbon);font-weight:400;margin-bottom:6px}
+  #sentinela{height:2px}
+  .cargando-mas{
+    display:none;text-align:center;padding:18px;color:var(--gris);font-size:.85rem;
+    letter-spacing:.08em;text-transform:uppercase;
+  }
+  .cargando-mas.visible{display:block}
+
+  /* ---------- Pie de página ---------- */
+  footer{
+    border-top:1px solid var(--linea);
+    background:var(--blanco);
+    padding:30px 20px 36px;text-align:center;
+    font-size:.82rem;color:var(--gris);
+  }
+  .datos-empresa{max-width:640px;margin:0 auto 16px;line-height:1.7}
+  .datos-empresa strong{
+    display:block;
+    font-family:'Marcellus',serif;font-weight:400;
+    font-size:1rem;letter-spacing:.1em;color:var(--carbon);
+    margin-bottom:6px;
+  }
+  .datos-empresa a{color:#9A6F14;text-decoration:none;font-weight:500}
+  .datos-empresa a:hover{text-decoration:underline}
+  .sync-info{padding-top:14px;border-top:1px solid var(--linea);max-width:640px;margin:0 auto}
+
+  /* ---------- Modales (QR y acceso) ---------- */
+  .modal-fondo{
+    position:fixed;inset:0;z-index:80;
+    background:rgba(38,38,43,.55);
+    display:none;align-items:center;justify-content:center;padding:20px;
+  }
+  .modal-fondo.abierto{display:flex}
+  .modal{
+    background:var(--blanco);border-radius:18px;
+    max-width:380px;width:100%;
+    padding:30px 28px 26px;text-align:center;position:relative;
+    box-shadow:0 24px 60px rgba(0,0,0,.3);
+    animation:aparecer .22s ease;
+  }
+  @keyframes aparecer{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .modal h3{font-family:'Marcellus',serif;font-weight:400;font-size:1.35rem;margin-bottom:4px}
+  .modal p{font-size:.88rem;color:var(--gris);margin-bottom:18px}
+  .cerrar{
+    position:absolute;top:12px;right:14px;
+    background:none;border:none;font-size:1.5rem;line-height:1;
+    color:var(--gris);cursor:pointer;padding:6px;
+  }
+  .cerrar:hover{color:var(--carbon)}
+  #qrcode{
+    display:flex;justify-content:center;margin:0 auto 20px;
+    padding:14px;border:1px solid var(--linea);border-radius:12px;
+    width:fit-content;min-width:220px;min-height:220px;align-items:center;background:#fff;
+  }
+  .btn-copiar{
+    font-family:'Jost',sans-serif;
+    width:100%;border:none;border-radius:999px;
+    background:var(--carbon);color:#FFFDF8;
+    padding:13px;font-size:.95rem;font-weight:500;letter-spacing:.04em;
+    cursor:pointer;transition:background .18s ease;
+    display:flex;align-items:center;justify-content:center;gap:8px;
+  }
+  .btn-copiar:hover{background:#5C5C63}
+  .btn-copiar:disabled{opacity:.6;cursor:progress}
+  .btn-copiar.copiado{background:var(--ok)}
+  .modal-fondo.login{z-index:85}
+  .campo-form{display:block;text-align:left;margin-bottom:14px}
+  .campo-form span{display:block;font-size:.8rem;letter-spacing:.06em;color:var(--gris);margin-bottom:5px}
+  .campo-form input{
+    width:100%;font-family:'Jost',sans-serif;font-size:1rem;
+    padding:11px 14px;border:1px solid var(--linea);border-radius:10px;
+    background:#fff;color:var(--carbon);
+  }
+  .campo-form input:focus{outline:none;border-color:var(--oro);box-shadow:0 0 0 3px rgba(201,150,46,.18)}
+  .error-login{min-height:1.2em;font-size:.85rem;color:var(--error);margin:-4px 0 12px}
+
+  /* ---------- Visor de imagen ampliada ---------- */
+  .visor-fondo{
+    position:fixed;inset:0;z-index:90;
+    background:rgba(30,28,24,.88);
+    display:none;align-items:center;justify-content:center;
+  }
+  .visor-fondo.abierto{display:flex}
+  .visor-contenido{
+    position:relative;
+    width:min(94vw,1100px);height:min(88vh,860px);
+    display:flex;align-items:center;justify-content:center;
+    overflow:hidden;touch-action:none;
+  }
+  .visor-contenido img{
+    max-width:100%;max-height:100%;
+    border-radius:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,.5);
+    transform-origin:center center;
+    transition:transform .12s ease-out;
+    user-select:none;-webkit-user-drag:none;
+    cursor:zoom-in;
+  }
+  .visor-contenido img.zoom{cursor:grab}
+  .visor-contenido img.arrastrando{cursor:grabbing;transition:none}
+  .visor-cerrar{
+    position:fixed;top:18px;right:18px;z-index:95;
+    width:44px;height:44px;border-radius:50%;
+    border:none;background:rgba(255,253,248,.95);color:#4A4A50;
+    font-size:1.5rem;line-height:1;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 14px rgba(0,0,0,.35);
+    transition:transform .15s ease;
+  }
+  .visor-cerrar:hover{transform:scale(1.08)}
+  .visor-pie{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:95;
+    background:rgba(255,253,248,.95);color:#4A4A50;
+    padding:9px 22px;border-radius:999px;
+    font-size:.9rem;letter-spacing:.03em;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+    max-width:86vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    text-align:center;
+  }
+  .visor-pie b{font-family:'Marcellus',serif;font-weight:400;letter-spacing:.06em}
+
+  /* ---------- Panel administrador ---------- */
+  .panel-admin{
+    position:fixed;inset:0;z-index:70;
+    background:var(--fondo);
+    overflow:auto;-webkit-overflow-scrolling:touch;
+  }
+  .panel-barra{
+    position:sticky;top:0;z-index:5;
+    background:var(--blanco);border-bottom:1px solid var(--linea);
+    padding:14px 20px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  }
+  .panel-barra h2{font-family:'Marcellus',serif;font-weight:400;font-size:1.3rem;letter-spacing:.04em}
+  .panel-barra small{color:var(--gris);font-size:.8rem}
+  .panel-acciones{display:flex;gap:8px;flex-wrap:wrap}
+  .btn-sec,.btn-primario,.btn-discreto{
+    font-family:'Jost',sans-serif;font-size:.88rem;font-weight:500;
+    border-radius:999px;padding:9px 18px;cursor:pointer;
+    transition:background .15s ease, color .15s ease, border-color .15s ease;
+  }
+  .btn-sec{background:transparent;border:1px solid var(--linea);color:var(--carbon)}
+  .btn-sec:hover{border-color:var(--oro);color:#9A6F14}
+  .btn-primario{background:var(--oro);border:1px solid var(--oro);color:#FFFDF8;font-weight:600}
+  .btn-primario:hover{background:var(--oro-claro);border-color:var(--oro-claro)}
+  .btn-discreto{background:transparent;border:1px dashed var(--linea);color:var(--gris)}
+  .btn-discreto:hover{color:var(--carbon);border-color:var(--gris)}
+  .btn-sec:focus-visible,.btn-primario:focus-visible,.btn-discreto:focus-visible{outline:3px solid var(--oro-claro);outline-offset:2px}
+  .btn-sec:disabled,.btn-primario:disabled,.btn-discreto:disabled{opacity:.55;cursor:progress}
+  .panel-cuerpo{max-width:1280px;margin:0 auto;padding:20px}
+  .zona-carga{
+    border:2px dashed #D9C9A3;border-radius:16px;
+    background:var(--blanco);
+    padding:26px 20px;text-align:center;cursor:pointer;
+    transition:background .15s ease, border-color .15s ease;
+  }
+  .zona-carga:hover,.zona-carga:focus-visible{border-color:var(--oro);outline:none}
+  .zona-carga.encima{background:#FBF3E0;border-color:var(--oro)}
+  .zona-carga strong{display:block;font-family:'Marcellus',serif;font-weight:400;font-size:1.15rem;margin-bottom:4px}
+  .zona-carga small{display:block;color:var(--gris);font-size:.82rem;line-height:1.5;margin-top:6px}
+  .progreso{
+    margin-top:14px;background:var(--blanco);border:1px solid var(--linea);
+    border-radius:12px;padding:14px 16px;font-size:.88rem;
+  }
+  .progreso-barra{height:8px;background:var(--beige);border-radius:99px;overflow:hidden;margin-bottom:8px}
+  .progreso-barra span{display:block;height:100%;width:0;background:var(--oro);transition:width .2s ease}
+  .progreso ul{list-style:none;margin-top:8px;color:var(--gris);font-size:.82rem;line-height:1.5;max-height:140px;overflow:auto}
+  .progreso li.mal{color:var(--error)}
+  .acciones-fotos{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .acciones-fotos .espacio{flex:1}
+  .estado-gh{font-size:.82rem;color:var(--gris)}
+  .estado-gh::before{content:"● "}
+  .estado-gh.ok::before{color:var(--ok)}
+  .estado-gh.no::before{color:var(--oro)}
+  .modal .nota{display:block;text-align:left;font-size:.78rem;color:var(--gris);margin:-4px 0 12px;line-height:1.45}
+  .btn-ancho{width:100%;margin-top:8px}
+  .tabla-herramientas{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:20px 0 12px}
+  .tabla-herramientas input[type=search]{
+    font-family:'Jost',sans-serif;font-size:.92rem;
+    padding:9px 16px;border:1px solid var(--linea);border-radius:999px;
+    background:var(--blanco);min-width:220px;color:var(--carbon);
+  }
+  .tabla-herramientas input[type=search]:focus{outline:none;border-color:var(--oro)}
+  .tabla-herramientas .espacio{flex:1}
+  .contador-admin{font-size:.85rem;color:var(--gris)}
+  .tabla-envoltura{
+    background:var(--blanco);border:1px solid var(--linea);border-radius:12px;
+    overflow:auto;max-height:calc(100vh - 150px);
+  }
+  .tabla-admin{border-collapse:collapse;width:100%;min-width:980px;font-size:.9rem}
+  .tabla-admin th{
+    position:sticky;top:0;z-index:2;
+    background:#F3EBDA;color:var(--carbon);
+    font-weight:600;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;
+    text-align:left;padding:10px 8px;border-bottom:1px solid var(--linea);
+    white-space:nowrap;
+  }
+  .tabla-admin td{border-bottom:1px solid #EFE8DA;border-right:1px solid #F3EDE1;padding:0;vertical-align:middle}
+  .tabla-admin tr:nth-child(even) td{background:#FDFBF6}
+  .tabla-admin tr.soltar td{background:#FBF0D6!important}
+  .tabla-admin th.c-prov{color:#9A6F14}
+  .tabla-admin input,.tabla-admin select{
+    width:100%;border:none;background:transparent;
+    font-family:'Jost',sans-serif;font-size:.9rem;color:var(--carbon);
+    padding:10px 8px;transition:background .25s ease;
+  }
+  .tabla-admin select{cursor:pointer;color:#C8930F}
+  .tabla-admin input:focus,.tabla-admin select:focus{outline:2px solid var(--oro);outline-offset:-2px;background:#fff}
+  .tabla-admin .guardando{background:#FFF6DA!important}
+  .tabla-admin .guardado{background:#E5F4E8!important}
+  .tabla-admin .fallo{background:#FCE4E1!important}
+  .c-foto{width:70px;text-align:center}
+  .mini-foto{
+    width:56px;height:42px;margin:4px 7px;border-radius:6px;
+    border:1px dashed #D9C9A3;background:var(--beige);color:var(--gris);
+    cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;
+  }
+  .mini-foto img{width:100%;height:100%;object-fit:cover;display:block}
+  .mini-foto.subiendo{opacity:.5;cursor:progress}
+  .c-serie{width:90px}.c-num{width:95px}.c-estrellas{width:110px}.c-borrar{width:46px;text-align:center}
+  .btn-borrar{
+    background:none;border:none;cursor:pointer;font-size:1rem;
+    opacity:.45;padding:8px;transition:opacity .15s ease;
+  }
+  .btn-borrar:hover,.btn-borrar:focus-visible{opacity:1}
+  .tabla-vacia{padding:40px;text-align:center;color:var(--gris)}
+  .aviso{
+    position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);z-index:100;
+    background:var(--carbon);color:#FFFDF8;
+    padding:11px 22px;border-radius:999px;font-size:.9rem;
+    box-shadow:0 8px 24px rgba(0,0,0,.25);
+    opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;
+    max-width:90vw;text-align:center;
+  }
+  .aviso.visible{opacity:1;transform:translateX(-50%) translateY(0)}
+  .aviso.mal{background:var(--error)}
+  .aviso.bien{background:var(--ok)}
+
+  @media (max-width:560px){
+    .header-inner{flex-direction:column;text-align:center}
+    .marca{align-items:center}
+    .busqueda-inner{flex-direction:column;align-items:stretch}
+    .contador{text-align:center}
+    .tabla-herramientas input[type=search]{min-width:0;flex:1}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="marca">
+      <img src="data:image/png;base64,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" alt="HABER'S" width="191" height="66">
+      <p>Muestrario de telas</p>
+    </div>
+    <div class="acciones-header">
+      <button class="btn-qr" id="abrirQr" type="button">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><path d="M14 14h3v3h-3zM20 14h1M14 20h1M20 20h1"/></svg>
+        Generar QR / Enlace
+      </button>
+      <button class="btn-usuario" id="btnUsuario" type="button" aria-label="Acceso administrador" title="Acceso administrador">👤</button>
+    </div>
+  </div>
+</header>
+
+<div class="barra-busqueda">
+  <div class="busqueda-inner">
+    <div class="campo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="buscar" type="search" placeholder="Buscar por línea, color o serie…" autocomplete="off" aria-label="Buscar telas">
+    </div>
+    <div class="contador" id="contador" aria-live="polite"></div>
+  </div>
+</div>
+
+<main>
+  <div class="grid" id="grid" role="list">
+    <div class="estado" id="cargando">
+      <div class="aguja" aria-hidden="true"></div>
+      <h3>Cargando muestrario…</h3>
+    </div>
+  </div>
+  <div id="sentinela" aria-hidden="true"></div>
+  <div class="cargando-mas" id="cargandoMas" aria-hidden="true">Cargando más telas…</div>
+</main>
+
+<footer>
+  <div class="datos-empresa">
+    <strong>ASOCIACIÓN HABERS DE MÉXICO S.A. DE C.V.</strong>
+    San José de los Leones No. Ext. 1, No. Interior 1002, Piso 10<br>
+    Pueblo San Francisco Cuautlalpan, Mpio. Naucalpan de Juárez, C.P. 53569<br>
+    TEL. <a href="tel:+525555302000">55 5530 2000</a> · R.F.C. AHS 960325 BI7 ·
+    <a href="https://habers.com.mx" target="_blank" rel="noopener">www.habers.com.mx</a>
+  </div>
+  <div class="sync-info">
+    © HABER'S · Textiles para hotelería
+  </div>
+</footer>
+
+<!-- ===================== PANEL ADMINISTRADOR ===================== -->
+<section class="panel-admin" id="panelAdmin" hidden aria-labelledby="tituloPanel">
+  <div class="panel-barra">
+    <div>
+      <h2 id="tituloPanel">Panel administrador</h2>
+      <small id="adminCorreo"></small>
+    </div>
+    <div class="panel-acciones">
+      <button class="btn-sec" id="btnVerCatalogo" type="button">← Ver catálogo</button>
+      <button class="btn-sec" id="btnCerrarSesion" type="button">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <div class="panel-cuerpo">
+    <div class="zona-carga" id="zonaCarga" role="button" tabindex="0" aria-label="Subir fotos de telas">
+      <strong>Arrastra aquí tus fotos</strong>
+      o haz clic para elegirlas desde tu equipo
+      <small>El nombre del archivo debe ser la Serie: <b>1.jpg</b> → Serie 1 · <b>6b.jpg</b> o <b>6 (b).jpg</b> → Serie 6b.<br>
+      Se comprimen automáticamente (máx. 1000 px, ~100 KB), se suben a la carpeta <b>fotos/</b> de tu repositorio y se asignan a su tela.<br>
+      También puedes soltar una foto sobre una fila.</small>
+    </div>
+    <div class="acciones-fotos">
+      <span class="estado-gh" id="estadoGitHub"></span>
+      <span class="espacio"></span>
+      <button class="btn-discreto" id="btnZip" type="button">Descargar fotos comprimidas (.zip)</button>
+      <button class="btn-discreto" id="btnConfigGH" type="button">⚙ Configurar GitHub</button>
+    </div>
+    <input type="file" id="inputZip" accept="image/*" multiple hidden>
+    <input type="file" id="inputFotos" accept="image/*" multiple hidden>
+    <input type="file" id="inputFotoFila" accept="image/*" hidden>
+    <input type="file" id="inputCsv" accept=".csv,text/csv" hidden>
+
+    <div class="progreso" id="progreso" hidden aria-live="polite">
+      <div class="progreso-barra"><span id="progresoRelleno"></span></div>
+      <div id="progresoTexto"></div>
+      <ul id="progresoDetalle"></ul>
+    </div>
+
+    <div class="tabla-herramientas">
+      <input type="search" id="buscarAdmin" placeholder="Filtrar tabla…" aria-label="Filtrar tabla" autocomplete="off">
+      <span class="contador-admin" id="contadorAdmin"></span>
+      <span class="espacio"></span>
+      <button class="btn-discreto" id="btnImportar" type="button">Importar CSV</button>
+      <button class="btn-primario" id="btnAgregar" type="button">+ Agregar fila</button>
+    </div>
+
+    <div class="tabla-envoltura">
+      <table class="tabla-admin">
+        <thead>
+          <tr>
+            <th class="c-foto">Foto</th>
+            <th class="c-serie">Serie</th>
+            <th>Línea</th>
+            <th>Color</th>
+            <th class="c-num">Mts</th>
+            <th class="c-num">Ancho</th>
+            <th class="c-estrellas">Estrellas</th>
+            <th class="c-prov">Proveedor</th>
+            <th class="c-borrar"><span class="sr">Eliminar</span></th>
+          </tr>
+        </thead>
+        <tbody id="tbodyAdmin"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Visor de imagen ampliada -->
+<div class="visor-fondo" id="visorFondo" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
+  <button class="visor-cerrar" id="visorCerrar" type="button" aria-label="Cerrar imagen">×</button>
+  <div class="visor-contenido" id="visorContenido">
+    <img id="visorImg" alt="">
+  </div>
+  <div class="visor-pie" id="visorPie"></div>
+</div>
+
+<!-- Modal QR -->
+<div class="modal-fondo" id="modalFondo" role="dialog" aria-modal="true" aria-labelledby="tituloQr">
+  <div class="modal">
+    <button class="cerrar" id="cerrarQr" type="button" aria-label="Cerrar">×</button>
+    <h3 id="tituloQr">Comparte el muestrario</h3>
+    <p>Escanea el código o copia el enlace para enviarlo por WhatsApp.</p>
+    <div id="qrcode"></div>
+    <button class="btn-copiar" id="btnCopiar" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+      <span id="txtCopiar">Copiar enlace al portapapeles</span>
+    </button>
+  </div>
+</div>
+
+<!-- Modal de acceso -->
+<div class="modal-fondo login" id="loginFondo" role="dialog" aria-modal="true" aria-labelledby="tituloLogin">
+  <form class="modal" id="formLogin" novalidate>
+    <button class="cerrar" id="cerrarLogin" type="button" aria-label="Cerrar">×</button>
+    <h3 id="tituloLogin">Acceso administrador</h3>
+    <p>Inicia sesión para gestionar el muestrario.</p>
+    <label class="campo-form"><span>Correo</span>
+      <input type="email" id="loginCorreo" autocomplete="username" required>
+    </label>
+    <label class="campo-form"><span>Contraseña</span>
+      <input type="password" id="loginClave" autocomplete="current-password" required>
+    </label>
+    <div class="error-login" id="errorLogin" role="alert"></div>
+    <button class="btn-copiar" id="btnEntrar" type="submit">Entrar</button>
+  </form>
+</div>
+
+<!-- Configuración de GitHub (solo administrador) -->
+<div class="modal-fondo login" id="ghFondo" role="dialog" aria-modal="true" aria-labelledby="tituloGitHub">
+  <form class="modal" id="formGitHub" novalidate autocomplete="off">
+    <button class="cerrar" id="cerrarGitHub" type="button" aria-label="Cerrar">×</button>
+    <h3 id="tituloGitHub">Configurar GitHub</h3>
+    <p>Las fotos se guardarán en la carpeta <b>fotos/</b> de tu repositorio. Estos datos se guardan solo en este navegador, nunca en el código.</p>
+    <label class="campo-form"><span>Usuario de GitHub (owner)</span>
+      <input type="text" id="ghOwner" placeholder="usuario" spellcheck="false">
+    </label>
+    <label class="campo-form"><span>Repositorio</span>
+      <input type="text" id="ghRepo" placeholder="nombre-del-repo" spellcheck="false">
+    </label>
+    <label class="campo-form"><span>Rama (opcional)</span>
+      <input type="text" id="ghRama" placeholder="Vacío = rama principal" spellcheck="false">
+    </label>
+    <label class="campo-form"><span>Token de acceso personal</span>
+      <input type="password" id="ghToken" placeholder="github_pat_…" spellcheck="false" autocomplete="new-password">
+    </label>
+    <small class="nota">Usa un token “fine-grained” limitado solo a este repositorio, con permiso <b>Contents: Read and write</b>.</small>
+    <div class="error-login" id="errorGitHub" role="alert"></div>
+    <button class="btn-copiar" id="btnGuardarGH" type="submit">Probar y guardar</button>
+    <button class="btn-sec btn-ancho" id="btnBorrarGH" type="button">Borrar datos de este navegador</button>
+  </form>
+</div>
+
+<div class="aviso" id="aviso" role="status" aria-live="polite"></div>
+
+<script type="module">
+/* =====================================================================
+   1) CREDENCIALES DE FIREBASE
+   ---------------------------------------------------------------------
+   Pega aquí los datos de tu proyecto:
+   Consola de Firebase → ⚙ Configuración del proyecto → General →
+   "Tus apps" → App web → "Configuración del SDK" → opción "Config".
+   Copia SOLO los valores entre comillas. No borres las comas.
+===================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyCk0zzLbcYFfAxYwomFJW7i1bTz-hH3yp0",
+  authDomain: "habers-muestrario.firebaseapp.com",
+  projectId: "habers-muestrario",
+  storageBucket: "habers-muestrario.firebasestorage.app",
+  messagingSenderId: "755027286826",
+  appId: "1:755027286826:web:37b275e2db9506370c9c53",
+  measurementId: "G-HC8HBZJTZ6"
+};
+
+/* =====================================================================
+   MUESTRARIO DE TELAS HABER'S — motor Firebase
+   ---------------------------------------------------------------------
+   · Catálogo público: Cloud Firestore (colección "telas") en tiempo real,
+     con caché local persistente → al volver, carga instantánea.
+   · Fotos: carpeta "fotos/" del repositorio de GitHub que publica Netlify.
+     Se suben desde el panel con la API de GitHub (sin Firebase Storage).
+   · Proveedor: colección separada "telas_privado", legible solo por el
+     administrador. El cliente nunca la descarga.
+   · Auth se carga solo cuando se abre el acceso administrador,
+     para que el catálogo público sea lo más ligero posible.
+===================================================================== */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import {
+  initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager,
+  collection, doc, onSnapshot, setDoc, updateDoc, deleteDoc, writeBatch, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
+const SDK = "https://www.gstatic.com/firebasejs/10.14.1/";
+
+/* ------------------------- CONFIGURACIÓN ------------------------- */
+const CONFIG = Object.freeze({
+  COLECCION: "telas",
+  COLECCION_PRIVADA: "telas_privado",
+  CARPETA_FOTOS: "fotos",
+  TAM_LOTE: 36,                 // tarjetas por bloque en el scroll infinito
+  MARGEN_IMG: "900px 0px",      // precarga de imágenes ~1 pantalla antes
+  MARGEN_SCROLL: "600px 0px",   // anticipación para el siguiente bloque
+  MAX_ANCHO: 1000,              // compresión: ancho máximo en px
+  CALIDAD: 0.80,                // compresión: calidad JPEG
+  COMPRESIONES_SIMULTANEAS: 4,  // fotos que se comprimen a la vez (la subida a GitHub es en fila)
+  LIMITE_SUGERIR_ZIP: 150,      // a partir de aquí se recomienda el .zip
+  FILAS_POR_LOTE_CSV: 200,      // 2 escrituras por fila → 400 por lote (límite 500)
+  PAPA_URL: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
+  QR_URL: "https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js",
+  JSZIP_URL: "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"
+});
+
+/* ------------------------- UTILIDADES ---------------------------- */
+const $ = (id) => document.getElementById(id);
+const ordenSerie = new Intl.Collator("es", { numeric: true, sensitivity: "base" });
+
+// Normaliza nombres de archivo/serie: "6 (b)" -> "6b", "6(B).PNG" -> "6b"
+function normalizar(texto){
+  return String(texto || "")
+    .toLowerCase()
+    .replace(/\.(png|jpe?g|webp|gif|heic|heif|avif)$/i, "")
+    .replace(/[\s().\-_]/g, "")
+    .trim();
+}
+
+// Texto de búsqueda: sin acentos ni mayúsculas
+function normalizarBusqueda(t){
+  return String(t || "").toLowerCase()
+    .normalize("NFD").replace(/[̀-ͯ]/g, "").trim();
+}
+
+function escaparHTML(t){
+  return String(t ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
+}
+
+const texto = (v) => (v === null || v === undefined) ? "" : String(v).trim();
+const estrellasValidas = (v) => Math.min(5, Math.max(0, parseInt(v, 10) || 0));
+
+function debounce(fn, ms){
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+}
+
+// Carga un script clásico bajo demanda (una sola vez por URL)
+const scriptsCargados = new Map();
+function cargarScript(src){
+  if (!scriptsCargados.has(src)){
+    scriptsCargados.set(src, new Promise((ok, mal) => {
+      const s = document.createElement("script");
+      s.src = src; s.async = true;
+      s.onload = ok;
+      s.onerror = () => { scriptsCargados.delete(src); mal(new Error("No se pudo cargar " + src)); };
+      document.head.appendChild(s);
+    }));
+  }
+  return scriptsCargados.get(src);
+}
+
+// Mensaje flotante breve (solo se usa en el panel administrador)
+let avisoTimer;
+function aviso(mensaje, tipo = ""){
+  const el = $("aviso");
+  el.textContent = mensaje;
+  el.className = "aviso visible " + tipo;
+  clearTimeout(avisoTimer);
+  avisoTimer = setTimeout(() => { el.className = "aviso"; }, tipo === "mal" ? 5000 : 2600);
+}
+
+/* ---------------------- INICIALIZACIÓN FIREBASE ------------------- */
+const configCompleta = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+let app = null, db = null;
+
+function iniciarFirebase(){
+  app = initializeApp(firebaseConfig);
+  try{
+    // Caché persistente en IndexedDB: la segunda visita muestra el catálogo al instante
+    db = initializeFirestore(app, {
+      localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() })
+    });
+  }catch(e){
+    db = getFirestore(app); // navegadores sin IndexedDB (p. ej. algunos modos privados)
+  }
+}
+
+/* --------------------------- ESTADO ------------------------------ */
+// Fotos recién subidas: se muestran desde la memoria del navegador mientras Netlify publica
+const Previas = new Map();   // "fotos/5.jpg?v=..." -> blob: URL local
+const urlVisible = (imagen) => Previas.get(imagen) || imagen;
+
+const Estado = {
+  porId: new Map(),   // id -> tela (todas, incluidas filas en blanco del admin)
+  todas: [],          // ordenadas por serie (admin)
+  publicas: [],       // con datos visibles (catálogo)
+  listo: false
+};
+
+// Convierte un documento de Firestore en un objeto de tela listo para usar
+function desdeDocumento(d){
+  const x = d.data();
+  const t = {
+    id: d.id,
+    serie: texto(x.serie),
+    linea: texto(x.linea),
+    color: texto(x.color),
+    mts: texto(x.mts),
+    ancho: texto(x.ancho),
+    estrellas: estrellasValidas(x.estrellas),
+    imagen: texto(x.imagen),
+    imagenRuta: texto(x.imagenRuta)
+  };
+  t.serieNorm = normalizar(t.serie);
+  t.busqueda = normalizarBusqueda(t.serie + " " + t.linea + " " + t.color);
+  return t;
+}
+
+/* =====================================================================
+   CATÁLOGO PÚBLICO
+===================================================================== */
+const grid = $("grid");
+const sentinela = $("sentinela");
+const cargandoMas = $("cargandoMas");
+const inputBuscar = $("buscar");
+const contador = $("contador");
+
+const Catalogo = {
+  filtradas: [],
+  renderizadas: 0,
+  tarjetas: new Map()   // id -> { firma, el } : reutiliza tarjetas sin cambios
+};
+
+// Observador de imágenes: asigna el src solo al acercarse al viewport
+const observadorImg = new IntersectionObserver((entradas) => {
+  for (const ent of entradas){
+    if (!ent.isIntersecting) continue;
+    const img = ent.target;
+    observadorImg.unobserve(img);
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  }
+}, { rootMargin: CONFIG.MARGEN_IMG });
+
+// Observador del final de la lista: agrega el siguiente bloque
+const observadorScroll = new IntersectionObserver((entradas) => {
+  if (entradas.some(e => e.isIntersecting)) renderizarLote();
+}, { rootMargin: CONFIG.MARGEN_SCROLL });
+
+// Si una foto falla, se muestra "Imagen no disponible" y se reintenta en segundo plano
+// (una foto recién subida tarda 1–2 minutos en publicarse en Netlify)
+grid.addEventListener("error", (e) => {
+  const img = e.target;
+  if (img.tagName !== "IMG") return;
+  const foto = img.closest(".foto");
+  if (!foto) return;
+  foto.classList.remove("ampliable");
+  const marcador = crearSinImagen();
+  img.replaceWith(marcador);
+  reintentarFoto(img, foto, marcador);
+}, true);
+
+function reintentarFoto(img, foto, marcador){
+  const intentos = Number(img.dataset.reintentos || 0);
+  const base = img.dataset.origen || img.getAttribute("src") || "";
+  if (intentos >= 3 || !base || base.startsWith("blob:")) return;
+  img.dataset.reintentos = intentos + 1;
+  img.dataset.origen = base;
+  setTimeout(() => {
+    if (!marcador.isConnected) return;
+    const prueba = new Image();
+    prueba.onload = () => {
+      if (!marcador.isConnected) return;
+      img.src = prueba.src;
+      marcador.replaceWith(img);
+      foto.classList.add("ampliable");
+    };
+    prueba.onerror = () => reintentarFoto(img, foto, marcador);
+    prueba.src = base + (base.includes("?") ? "&" : "?") + "r=" + Date.now();
+  }, 30000 * (intentos + 1));
+}
+
+// Fundido suave al terminar de cargar
+grid.addEventListener("load", (e) => {
+  if (e.target.tagName === "IMG") e.target.classList.add("lista");
+}, true);
+
+function crearSinImagen(){
+  const div = document.createElement("div");
+  div.className = "sin-imagen";
+  div.innerHTML = '<div class="mono">H</div><small>Imagen no disponible</small>';
+  return div;
+}
+
+const firmaDe = (t) => [t.serie, t.linea, t.color, t.mts, t.ancho, t.estrellas, t.imagen].join("|");
+
+function tarjetaHTML(t){
+  const foto = t.imagen
+    ? '<img data-src="' + escaparHTML(urlVisible(t.imagen)) + '" alt="Tela serie ' + escaparHTML(t.serie) + '" decoding="async">'
+    : '<div class="sin-imagen"><div class="mono">H</div><small>Imagen no disponible</small></div>';
+
+  return '<article class="tarjeta" role="listitem">' +
+    '<div class="foto' + (t.imagen ? ' ampliable' : '') + '"' +
+      ' data-serie="' + escaparHTML(t.serie) + '"' +
+      ' data-linea="' + escaparHTML(t.linea) + '"' +
+      ' data-color="' + escaparHTML(t.color) + '">' +
+      foto +
+      '<span class="insignia-serie">Serie ' + escaparHTML(t.serie) + '</span>' +
+    '</div>' +
+    '<div class="info">' +
+      '<h2>' + (escaparHTML(t.linea) || "Línea sin nombre") + '</h2>' +
+      '<div class="color">' + (escaparHTML(t.color) || "—") + '</div>' +
+      '<div class="estrellas" aria-label="' + t.estrellas + ' de 5 estrellas">' + "★".repeat(t.estrellas) + '</div>' +
+      '<div class="detalles">' +
+        '<div>Metros<b>' + (escaparHTML(t.mts) || "—") + '</b></div>' +
+        '<div>Ancho<b>' + (escaparHTML(t.ancho) || "—") + '</b></div>' +
+      '</div>' +
+    '</div>' +
+  '</article>';
+}
+
+// Fábrica de elementos en el documento principal (no en un <template> inerte)
+const fabrica = document.createElement("div");
+function crearTarjeta(t){
+  fabrica.innerHTML = tarjetaHTML(t);
+  const el = fabrica.firstElementChild;
+  fabrica.removeChild(el);
+  const img = el.querySelector("img[data-src]");
+  if (img) observadorImg.observe(img);
+  return el;
+}
+
+// Devuelve la tarjeta existente si no cambió; si cambió, la reconstruye
+function tarjetaDe(t){
+  const firma = firmaDe(t);
+  const previa = Catalogo.tarjetas.get(t.id);
+  if (previa && previa.firma === firma) return previa.el;
+  if (previa) olvidarTarjeta(t.id);
+  const el = crearTarjeta(t);
+  Catalogo.tarjetas.set(t.id, { firma, el });
+  return el;
+}
+
+function olvidarTarjeta(id){
+  const previa = Catalogo.tarjetas.get(id);
+  if (!previa) return;
+  const img = previa.el.querySelector("img[data-src]");
+  if (img) observadorImg.unobserve(img);
+  Catalogo.tarjetas.delete(id);
+}
+
+function mostrarEstado(titulo, detalle){
+  grid.innerHTML = '<div class="estado"><h3>' + titulo + '</h3>' + (detalle ? '<p>' + detalle + '</p>' : '') + '</div>';
+}
+
+function actualizarContador(total){
+  contador.innerHTML = "<b>" + total + "</b> tela" + (total === 1 ? "" : "s");
+}
+
+// Si el centinela sigue visible tras pintar (pantallas altas), agrega otro bloque
+function comprobarCentinela(){
+  requestAnimationFrame(() => {
+    if (Catalogo.renderizadas >= Catalogo.filtradas.length) return;
+    if (sentinela.getBoundingClientRect().top < window.innerHeight + 600) renderizarLote();
+  });
+}
+
+function renderizarLote(){
+  const total = Catalogo.filtradas.length;
+  if (Catalogo.renderizadas >= total){ cargandoMas.classList.remove("visible"); return; }
+  const fin = Math.min(Catalogo.renderizadas + CONFIG.TAM_LOTE, total);
+  const frag = document.createDocumentFragment();
+  for (let i = Catalogo.renderizadas; i < fin; i++) frag.appendChild(tarjetaDe(Catalogo.filtradas[i]));
+  grid.appendChild(frag);
+  Catalogo.renderizadas = fin;
+  cargandoMas.classList.toggle("visible", fin < total);
+  comprobarCentinela();
+}
+
+// Pinta las primeras `cantidad` tarjetas (reutilizando las que no cambiaron)
+function pintarDesde(cantidad){
+  const total = Catalogo.filtradas.length;
+  actualizarContador(total);
+  if (total === 0){
+    Catalogo.renderizadas = 0;
+    cargandoMas.classList.remove("visible");
+    if (inputBuscar.value.trim()) mostrarEstado("Sin resultados", "No se encontraron telas con esa búsqueda. Prueba con otra línea, color o serie.");
+    else mostrarEstado("Muestrario en actualización", "Pronto estarán disponibles nuestras telas.");
+    return;
+  }
+  const n = Math.min(cantidad, total);
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < n; i++) frag.appendChild(tarjetaDe(Catalogo.filtradas[i]));
+  grid.replaceChildren(frag);
+  Catalogo.renderizadas = n;
+  cargandoMas.classList.toggle("visible", n < total);
+  comprobarCentinela();
+}
+
+// conservar = true mantiene las tarjetas ya mostradas (actualización en vivo)
+function aplicarFiltro(conservar){
+  const termino = normalizarBusqueda(inputBuscar.value);
+  Catalogo.filtradas = termino
+    ? Estado.publicas.filter(t => t.busqueda.includes(termino))
+    : Estado.publicas;
+  pintarDesde(conservar ? Math.max(Catalogo.renderizadas, CONFIG.TAM_LOTE) : CONFIG.TAM_LOTE);
+}
+
+inputBuscar.addEventListener("input", debounce(() => aplicarFiltro(false), 120));
+
+/* -------------------- SINCRONIZACIÓN EN TIEMPO REAL --------------- */
+function procesarCambios(snap){
+  // Primera visita sin caché: se espera la respuesta del servidor (mantiene "Cargando…")
+  if (!Estado.listo && snap.empty && snap.metadata.fromCache) return;
+  const cambios = snap.docChanges();
+  if (Estado.listo && cambios.length === 0) return; // solo cambió metadata
+
+  for (const c of cambios){
+    if (c.type === "removed"){
+      Estado.porId.delete(c.doc.id);
+      olvidarTarjeta(c.doc.id);
+    }else{
+      Estado.porId.set(c.doc.id, desdeDocumento(c.doc));
+    }
+  }
+  Estado.todas = [...Estado.porId.values()].sort((a, b) => ordenSerie.compare(a.serie, b.serie));
+  Estado.publicas = Estado.todas.filter(t => t.serie || t.linea || t.color);
+  Estado.listo = true;
+
+  aplicarFiltro(true);
+  if (Admin.construida) Admin.aplicarCambios(cambios);
+}
+
+function escucharCatalogo(){
+  onSnapshot(collection(db, CONFIG.COLECCION), procesarCambios, (err) => {
+    console.error("HABER'S · error al leer el catálogo:", err);
+    if (!Estado.listo) mostrarEstado("No se pudo cargar el muestrario", "Verifica tu conexión a internet e intenta de nuevo.");
+  });
+}
+
+/* =====================================================================
+   VISOR DE IMAGEN CON ZOOM
+===================================================================== */
+const visorFondo = $("visorFondo");
+const visorImg = $("visorImg");
+const visorPie = $("visorPie");
+const visorContenido = $("visorContenido");
+
+const Zoom = { escala: 1, x: 0, y: 0, arrastrando: false, ix: 0, iy: 0, pellizco: 0, ultimoTap: 0 };
+
+function aplicarTransform(){
+  visorImg.style.transform = "translate(" + Zoom.x + "px, " + Zoom.y + "px) scale(" + Zoom.escala + ")";
+  visorImg.classList.toggle("zoom", Zoom.escala > 1);
+}
+function reiniciarZoom(){ Zoom.escala = 1; Zoom.x = 0; Zoom.y = 0; aplicarTransform(); }
+function alternarZoom(){ if (Zoom.escala > 1) reiniciarZoom(); else { Zoom.escala = 2.4; aplicarTransform(); } }
+
+function abrirVisor(foto){
+  const img = foto.querySelector("img");
+  if (!img || !img.src) return;
+  visorImg.src = img.src;
+  visorImg.alt = img.alt || "";
+  visorPie.innerHTML = "<b>Serie " + escaparHTML(foto.dataset.serie || "") + "</b>" +
+    (foto.dataset.linea ? " · " + escaparHTML(foto.dataset.linea) : "") +
+    (foto.dataset.color ? " · " + escaparHTML(foto.dataset.color) : "");
+  reiniciarZoom();
+  visorFondo.classList.add("abierto");
+  document.body.classList.add("bloqueado");
+}
+
+function cerrarVisor(){
+  visorFondo.classList.remove("abierto");
+  visorImg.removeAttribute("src");     // libera la memoria de la imagen ampliada
+  if (!Admin.abierto) document.body.classList.remove("bloqueado");
+}
+
+grid.addEventListener("click", e => {
+  const foto = e.target.closest(".foto.ampliable");
+  if (foto) abrirVisor(foto);
+});
+$("visorCerrar").addEventListener("click", cerrarVisor);
+visorFondo.addEventListener("click", e => {
+  if (e.target === visorFondo || e.target === visorContenido) cerrarVisor();
+});
+
+visorContenido.addEventListener("wheel", e => {
+  e.preventDefault();
+  Zoom.escala = Math.min(5, Math.max(1, Zoom.escala * (e.deltaY < 0 ? 1.15 : 0.87)));
+  if (Zoom.escala === 1){ Zoom.x = 0; Zoom.y = 0; }
+  aplicarTransform();
+}, { passive: false });
+
+visorImg.addEventListener("dblclick", e => { e.preventDefault(); alternarZoom(); });
+
+visorImg.addEventListener("mousedown", e => {
+  if (Zoom.escala <= 1) return;
+  e.preventDefault();
+  Zoom.arrastrando = true;
+  visorImg.classList.add("arrastrando");
+  Zoom.ix = e.clientX - Zoom.x;
+  Zoom.iy = e.clientY - Zoom.y;
+});
+window.addEventListener("mousemove", e => {
+  if (!Zoom.arrastrando) return;
+  Zoom.x = e.clientX - Zoom.ix;
+  Zoom.y = e.clientY - Zoom.iy;
+  aplicarTransform();
+});
+window.addEventListener("mouseup", () => {
+  Zoom.arrastrando = false;
+  visorImg.classList.remove("arrastrando");
+});
+
+const distancia = (t) => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+
+visorContenido.addEventListener("touchstart", e => {
+  if (e.touches.length === 2){
+    Zoom.pellizco = distancia(e.touches);
+  }else if (e.touches.length === 1){
+    const ahora = Date.now();
+    if (ahora - Zoom.ultimoTap < 300) alternarZoom();
+    Zoom.ultimoTap = ahora;
+    if (Zoom.escala > 1){
+      Zoom.arrastrando = true;
+      Zoom.ix = e.touches[0].clientX - Zoom.x;
+      Zoom.iy = e.touches[0].clientY - Zoom.y;
+    }
+  }
+}, { passive: true });
+
+visorContenido.addEventListener("touchmove", e => {
+  if (e.touches.length === 2){
+    e.preventDefault();
+    const d = distancia(e.touches);
+    if (Zoom.pellizco > 0){
+      Zoom.escala = Math.min(5, Math.max(1, Zoom.escala * (d / Zoom.pellizco)));
+      if (Zoom.escala === 1){ Zoom.x = 0; Zoom.y = 0; }
+      aplicarTransform();
+    }
+    Zoom.pellizco = d;
+  }else if (e.touches.length === 1 && Zoom.arrastrando && Zoom.escala > 1){
+    e.preventDefault();
+    Zoom.x = e.touches[0].clientX - Zoom.ix;
+    Zoom.y = e.touches[0].clientY - Zoom.iy;
+    aplicarTransform();
+  }
+}, { passive: false });
+
+visorContenido.addEventListener("touchend", () => { Zoom.arrastrando = false; Zoom.pellizco = 0; });
+
+/* =====================================================================
+   MODAL QR / ENLACE
+===================================================================== */
+const modalFondo = $("modalFondo");
+let qrGenerado = false;
+
+$("abrirQr").addEventListener("click", async () => {
+  modalFondo.classList.add("abierto");
+  if (qrGenerado) return;
+  try{
+    await cargarScript(CONFIG.QR_URL);   // la librería QR solo se descarga si se usa
+    new QRCode($("qrcode"), {
+      text: window.location.href,
+      width: 190, height: 190,
+      colorDark: "#26262B", colorLight: "#FFFFFF",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    qrGenerado = true;
+  }catch(e){
+    $("qrcode").textContent = "No se pudo generar el QR. Usa el botón para copiar el enlace.";
+  }
+});
+
+function cerrarModal(){ modalFondo.classList.remove("abierto"); }
+$("cerrarQr").addEventListener("click", cerrarModal);
+modalFondo.addEventListener("click", e => { if (e.target === modalFondo) cerrarModal(); });
+
+$("btnCopiar").addEventListener("click", async () => {
+  const btn = $("btnCopiar"), txt = $("txtCopiar");
+  try{
+    await navigator.clipboard.writeText(window.location.href);
+  }catch(e){
+    const area = document.createElement("textarea");
+    area.value = window.location.href;
+    document.body.appendChild(area);
+    area.select();
+    document.execCommand("copy");
+    area.remove();
+  }
+  btn.classList.add("copiado");
+  txt.textContent = "¡Enlace copiado!";
+  setTimeout(() => {
+    btn.classList.remove("copiado");
+    txt.textContent = "Copiar enlace al portapapeles";
+  }, 2200);
+});
+
+/* =====================================================================
+   ACCESO ADMINISTRADOR (Auth se carga bajo demanda)
+===================================================================== */
+const Sesion = { auth: null, authMod: null, usuario: null };
+
+async function cargarAuth(){
+  if (Sesion.auth) return Sesion.auth;
+  Sesion.authMod = await import(SDK + "firebase-auth.js");
+  Sesion.auth = Sesion.authMod.getAuth(app);
+  // Espera a que Firebase restaure una sesión previa (si existe)
+  await new Promise(ok => {
+    const quitar = Sesion.authMod.onAuthStateChanged(Sesion.auth, () => { quitar(); ok(); });
+  });
+  Sesion.authMod.onAuthStateChanged(Sesion.auth, alCambiarSesion);
+  return Sesion.auth;
+}
+
+function alCambiarSesion(usuario){
+  Sesion.usuario = usuario;
+  if (!usuario && Admin.abierto) cerrarPanel();
+  if (!usuario) Admin.detener();
+}
+
+const loginFondo = $("loginFondo");
+const btnUsuario = $("btnUsuario");
+
+btnUsuario.addEventListener("click", async () => {
+  if (!configCompleta){ aviso("Primero pega las credenciales de Firebase en el código.", "mal"); return; }
+  btnUsuario.classList.add("ocupado");
+  try{
+    const auth = await cargarAuth();
+    if (auth.currentUser) await abrirPanel();
+    else abrirLogin();
+  }catch(e){
+    console.error(e);
+    aviso("No se pudo iniciar el acceso. Revisa tu conexión.", "mal");
+  }finally{
+    btnUsuario.classList.remove("ocupado");
+  }
+});
+
+function abrirLogin(){
+  $("errorLogin").textContent = "";
+  loginFondo.classList.add("abierto");
+  setTimeout(() => $("loginCorreo").focus(), 50);
+}
+function cerrarLogin(){ loginFondo.classList.remove("abierto"); }
+$("cerrarLogin").addEventListener("click", cerrarLogin);
+loginFondo.addEventListener("click", e => { if (e.target === loginFondo) cerrarLogin(); });
+
+const ERRORES_AUTH = {
+  "auth/invalid-credential": "Correo o contraseña incorrectos.",
+  "auth/wrong-password": "Correo o contraseña incorrectos.",
+  "auth/user-not-found": "Correo o contraseña incorrectos.",
+  "auth/invalid-email": "El correo no tiene un formato válido.",
+  "auth/too-many-requests": "Demasiados intentos. Espera unos minutos e inténtalo de nuevo.",
+  "auth/network-request-failed": "Sin conexión. Revisa tu internet.",
+  "auth/user-disabled": "Este usuario está deshabilitado."
+};
+
+$("formLogin").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const correo = $("loginCorreo").value.trim();
+  const clave = $("loginClave").value;
+  const btn = $("btnEntrar");
+  if (!correo || !clave){ $("errorLogin").textContent = "Escribe tu correo y contraseña."; return; }
+  btn.disabled = true; btn.textContent = "Entrando…";
+  try{
+    const auth = await cargarAuth();
+    await Sesion.authMod.signInWithEmailAndPassword(auth, correo, clave);
+    $("loginClave").value = "";
+    cerrarLogin();
+    await abrirPanel();
+  }catch(err){
+    $("errorLogin").textContent = ERRORES_AUTH[err.code] || "No se pudo iniciar sesión.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Entrar";
+  }
+});
+
+/* =====================================================================
+   PANEL ADMINISTRADOR
+===================================================================== */
+const panel = $("panelAdmin");
+const tbody = $("tbodyAdmin");
+const buscarAdmin = $("buscarAdmin");
+
+const Admin = {
+  abierto: false,
+  construida: false,
+  filas: new Map(),         // id -> <tr>
+  proveedores: new Map(),   // id -> proveedor (solo en memoria del admin)
+  quitarPrivado: null,
+
+  aplicarCambios(cambios){
+    if (cambios.length > 25){ construirTabla(); return; } // cambios masivos (p. ej. importación)
+    for (const c of cambios){
+      const id = c.doc.id;
+      if (c.type === "removed"){
+        const tr = Admin.filas.get(id);
+        if (tr) tr.remove();
+        Admin.filas.delete(id);
+      }else if (Admin.filas.has(id)){
+        actualizarFila(Admin.filas.get(id), Estado.porId.get(id));
+      }else{
+        const tr = crearFila(Estado.porId.get(id));
+        tbody.prepend(tr);                     // las filas nuevas aparecen arriba
+        Admin.filas.set(id, tr);
+      }
+    }
+    quitarMensajeVacio();
+    actualizarContadorAdmin();
+  },
+
+  detener(){
+    if (Admin.quitarPrivado){ Admin.quitarPrivado(); Admin.quitarPrivado = null; }
+    Admin.proveedores.clear();
+    Admin.filas.clear();
+    tbody.textContent = "";
+    $("progreso").hidden = true;
+    Admin.construida = false;
+  }
+};
+
+async function abrirPanel(){
+  actualizarEstadoGitHub();
+  $("adminCorreo").textContent = Sesion.auth.currentUser ? Sesion.auth.currentUser.email : "";
+  if (!Admin.construida) construirTabla();
+  if (!Admin.quitarPrivado) escucharProveedores();
+  panel.hidden = false;
+  Admin.abierto = true;
+  document.body.classList.add("bloqueado");
+  panel.scrollTop = 0;
+  document.querySelector(".tabla-envoltura").scrollTop = 0;
+}
+
+function cerrarPanel(){
+  panel.hidden = true;
+  Admin.abierto = false;
+  document.body.classList.remove("bloqueado");
+}
+
+$("btnVerCatalogo").addEventListener("click", cerrarPanel);
+$("btnCerrarSesion").addEventListener("click", async () => {
+  await Sesion.authMod.signOut(Sesion.auth);
+  cerrarPanel();
+  aviso("Sesión cerrada");
+});
+
+// Proveedor: colección privada, solo se escucha con sesión iniciada
+function escucharProveedores(){
+  Admin.quitarPrivado = onSnapshot(collection(db, CONFIG.COLECCION_PRIVADA), (snap) => {
+    for (const c of snap.docChanges()){
+      if (c.type === "removed") Admin.proveedores.delete(c.doc.id);
+      else Admin.proveedores.set(c.doc.id, texto(c.doc.data().proveedor));
+      const tr = Admin.filas.get(c.doc.id);
+      if (tr) ponerValor(tr.querySelector('[data-campo="proveedor"]'), Admin.proveedores.get(c.doc.id) || "");
+    }
+  }, (err) => {
+    console.error(err);
+    aviso("Sin permiso para leer proveedores. Revisa las reglas de Firestore.", "mal");
+  });
+}
+
+/* ------------------------ Tabla estilo Excel ---------------------- */
+function opcionesEstrellas(valor){
+  let html = '<option value="0"' + (valor === 0 ? " selected" : "") + '>—</option>';
+  for (let i = 1; i <= 5; i++){
+    html += '<option value="' + i + '"' + (valor === i ? " selected" : "") + '>' + "★".repeat(i) + '</option>';
+  }
+  return html;
+}
+
+function miniFotoHTML(t){
+  return t.imagen
+    ? '<img src="' + escaparHTML(urlVisible(t.imagen)) + '" alt="" loading="lazy" decoding="async">'
+    : '<span aria-hidden="true">+</span>';
+}
+
+function filaHTML(t){
+  const celda = (campo, valor, etiqueta) =>
+    '<td><input data-campo="' + campo + '" value="' + escaparHTML(valor) + '" aria-label="' + etiqueta + '" autocomplete="off"></td>';
+  return '<tr data-id="' + t.id + '">' +
+    '<td class="c-foto"><button type="button" class="mini-foto" data-accion="foto" data-img="' + escaparHTML(t.imagen) + '" aria-label="Cambiar foto" title="Clic o suelta una foto aquí">' + miniFotoHTML(t) + '</button></td>' +
+    celda("serie", t.serie, "Serie") +
+    celda("linea", t.linea, "Línea") +
+    celda("color", t.color, "Color") +
+    celda("mts", t.mts, "Metros") +
+    celda("ancho", t.ancho, "Ancho") +
+    '<td><select data-campo="estrellas" aria-label="Estrellas">' + opcionesEstrellas(t.estrellas) + '</select></td>' +
+    celda("proveedor", Admin.proveedores.get(t.id) || "", "Proveedor") +
+    '<td class="c-borrar"><button type="button" class="btn-borrar" data-accion="borrar" aria-label="Eliminar fila" title="Eliminar">🗑</button></td>' +
+  '</tr>';
+}
+
+const fabricaFilas = document.createElement("tbody");
+function crearFila(t){
+  fabricaFilas.innerHTML = filaHTML(t);
+  return fabricaFilas.firstElementChild;
+}
+
+function construirTabla(){
+  fabricaFilas.innerHTML = Estado.todas.map(filaHTML).join("");
+  Admin.filas.clear();
+  for (const tr of fabricaFilas.children) Admin.filas.set(tr.dataset.id, tr);
+  tbody.replaceChildren(...fabricaFilas.children);
+  Admin.construida = true;
+  if (Estado.todas.length === 0){
+    tbody.innerHTML = '<tr class="vacia"><td colspan="9" class="tabla-vacia">Aún no hay telas. Usa “Importar CSV” o “+ Agregar fila”.</td></tr>';
+  }
+  filtrarTabla();
+  actualizarContadorAdmin();
+}
+
+function quitarMensajeVacio(){
+  const vacia = tbody.querySelector("tr.vacia");
+  if (vacia && Admin.filas.size) vacia.remove();
+}
+
+// Actualiza una celda sin tocar la que el usuario está editando
+function ponerValor(control, valor){
+  if (!control || control === document.activeElement) return;
+  if (control.value !== String(valor)) control.value = String(valor);
+}
+
+function actualizarFila(tr, t){
+  if (!tr || !t) return;
+  for (const campo of ["serie", "linea", "color", "mts", "ancho", "estrellas"]){
+    ponerValor(tr.querySelector('[data-campo="' + campo + '"]'), t[campo]);
+  }
+  const boton = tr.querySelector(".mini-foto");
+  if (boton.dataset.img !== t.imagen){
+    boton.dataset.img = t.imagen;
+    boton.innerHTML = miniFotoHTML(t);
+  }
+}
+
+function actualizarContadorAdmin(){
+  const n = Admin.filas.size;
+  $("contadorAdmin").textContent = n + " registro" + (n === 1 ? "" : "s");
+}
+
+function filtrarTabla(){
+  const termino = normalizarBusqueda(buscarAdmin.value);
+  for (const tr of Admin.filas.values()){
+    if (!termino){ tr.hidden = false; continue; }
+    let contenido = "";
+    for (const c of tr.querySelectorAll("input")) contenido += c.value + " ";
+    tr.hidden = !normalizarBusqueda(contenido).includes(termino);
+  }
+}
+buscarAdmin.addEventListener("input", debounce(filtrarTabla, 150));
+
+function marcar(control, estado){
+  control.classList.remove("guardando", "guardado", "fallo");
+  if (estado) control.classList.add(estado);
+  if (estado === "guardado") setTimeout(() => control.classList.remove("guardado"), 900);
+}
+
+// Guardado automático de una celda
+async function guardarCelda(control){
+  const tr = control.closest("tr");
+  const id = tr && tr.dataset.id;
+  if (!id) return;
+  const campo = control.dataset.campo;
+  const valor = control.value.trim();
+  marcar(control, "guardando");
+  try{
+    if (campo === "proveedor"){
+      await setDoc(doc(db, CONFIG.COLECCION_PRIVADA, id), { proveedor: valor }, { merge: true });
+    }else{
+      const datos = { [campo]: campo === "estrellas" ? estrellasValidas(valor) : valor, actualizado: serverTimestamp() };
+      if (campo === "serie") datos.serieNorm = normalizar(valor);
+      await updateDoc(doc(db, CONFIG.COLECCION, id), datos);
+    }
+    control.dataset.original = control.value;
+    marcar(control, "guardado");
+  }catch(err){
+    console.error(err);
+    marcar(control, "fallo");
+    aviso("No se pudo guardar el cambio. Revisa tu conexión o permisos.", "mal");
+  }
+}
+
+tbody.addEventListener("focusin", e => {
+  if (e.target.dataset.campo) e.target.dataset.original = e.target.value;
+});
+tbody.addEventListener("change", e => {
+  if (e.target.dataset.campo) guardarCelda(e.target);
+});
+
+// Enter baja a la misma columna de la siguiente fila (como Excel); Esc deshace
+tbody.addEventListener("keydown", e => {
+  const control = e.target;
+  if (!control.dataset.campo) return;
+  if (e.key === "Enter"){
+    e.preventDefault();
+    let siguiente = control.closest("tr").nextElementSibling;
+    while (siguiente && siguiente.hidden) siguiente = siguiente.nextElementSibling;
+    const destino = siguiente && siguiente.querySelector('[data-campo="' + control.dataset.campo + '"]');
+    if (destino){ destino.focus(); if (destino.select) destino.select(); }
+    else control.blur();
+  }else if (e.key === "Escape"){
+    e.stopPropagation();
+    if (control.dataset.original !== undefined) control.value = control.dataset.original;
+    control.blur();
+  }
+});
+
+// Botones de cada fila (foto y eliminar)
+tbody.addEventListener("click", e => {
+  const boton = e.target.closest("[data-accion]");
+  if (!boton) return;
+  const id = boton.closest("tr").dataset.id;
+  if (boton.dataset.accion === "foto"){
+    $("inputFotoFila").dataset.id = id;
+    $("inputFotoFila").click();
+  }else if (boton.dataset.accion === "borrar"){
+    eliminarFila(id);
+  }
+});
+
+$("inputFotoFila").addEventListener("change", e => {
+  const archivo = e.target.files[0];
+  const id = e.target.dataset.id;
+  e.target.value = "";
+  if (archivo && id) subirParaFila(id, archivo);
+});
+
+$("btnAgregar").addEventListener("click", async () => {
+  const btn = $("btnAgregar");
+  btn.disabled = true;
+  try{
+    const ref = doc(collection(db, CONFIG.COLECCION));
+    buscarAdmin.value = "";
+    filtrarTabla();
+    await setDoc(ref, {
+      serie: "", linea: "", color: "", mts: "", ancho: "",
+      estrellas: 0, imagen: "", imagenRuta: "", serieNorm: "",
+      actualizado: serverTimestamp()
+    });
+    const celda = tbody.querySelector('tr[data-id="' + ref.id + '"] [data-campo="serie"]');
+    if (celda){ celda.scrollIntoView({ block: "center" }); celda.focus(); }
+  }catch(err){
+    console.error(err);
+    aviso("No se pudo agregar la fila.", "mal");
+  }finally{
+    btn.disabled = false;
+  }
+});
+
+async function eliminarFila(id){
+  const t = Estado.porId.get(id);
+  const nombre = t && t.serie ? 'la serie "' + t.serie + '"' : "esta fila";
+  if (!window.confirm("¿Eliminar " + nombre + "? Esta acción no se puede deshacer.")) return;
+  try{
+    await deleteDoc(doc(db, CONFIG.COLECCION, id));
+    deleteDoc(doc(db, CONFIG.COLECCION_PRIVADA, id)).catch(() => {});
+    if (t && t.imagenRuta) borrarFotoSiHuerfana(t.imagenRuta, [id]);
+    aviso("Registro eliminado");
+  }catch(err){
+    console.error(err);
+    aviso("No se pudo eliminar el registro.", "mal");
+  }
+}
+
+/* ------------------------ Compresión de fotos --------------------- */
+function leerComoImagen(archivo){
+  return new Promise((ok, mal) => {
+    const url = URL.createObjectURL(archivo);
+    const img = new Image();
+    img.onload = () => { URL.revokeObjectURL(url); ok(img); };
+    img.onerror = () => { URL.revokeObjectURL(url); mal(new Error("Formato no compatible")); };
+    img.src = url;
+  });
+}
+
+// Reduce a máx. 1000 px de ancho y JPEG 0.80 (~100 KB por foto)
+async function comprimir(archivo){
+  let fuente;
+  try{ fuente = await createImageBitmap(archivo, { imageOrientation: "from-image" }); }
+  catch(e){ fuente = await leerComoImagen(archivo); }
+  const escala = Math.min(1, CONFIG.MAX_ANCHO / fuente.width);
+  const w = Math.round(fuente.width * escala);
+  const h = Math.round(fuente.height * escala);
+  const canvas = document.createElement("canvas");
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext("2d");
+  ctx.fillStyle = "#FFFFFF";                // fondo blanco para PNG con transparencia
+  ctx.fillRect(0, 0, w, h);
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(fuente, 0, 0, w, h);
+  if (fuente.close) fuente.close();
+  const blob = await new Promise(ok => canvas.toBlob(ok, "image/jpeg", CONFIG.CALIDAD));
+  canvas.width = canvas.height = 0;         // libera memoria del canvas
+  if (!blob) throw new Error("No se pudo comprimir la imagen");
+  return blob;
+}
+
+/* --------------------- GitHub: carpeta fotos/ ---------------------
+   Las fotos se guardan como archivos en el repositorio. Netlify publica
+   el repositorio, así que cada foto queda en  tusitio.com/fotos/{serie}.jpg
+   El token vive SOLO en el localStorage de este navegador.
+------------------------------------------------------------------- */
+const GitHub = {
+  CLAVE: "habers_github_v1",
+  leer(){
+    try{
+      const c = JSON.parse(localStorage.getItem(GitHub.CLAVE) || "null");
+      return c && c.owner && c.repo && c.token ? c : null;
+    }catch(e){ return null; }
+  },
+  guardar(c){ localStorage.setItem(GitHub.CLAVE, JSON.stringify(c)); },
+  borrar(){ try{ localStorage.removeItem(GitHub.CLAVE); }catch(e){} }
+};
+
+// GitHub rechaza escrituras simultáneas en la misma rama: se encadenan una tras otra
+let colaGitHub = Promise.resolve();
+function enSerie(tarea){
+  const p = colaGitHub.then(tarea, tarea);
+  colaGitHub = p.catch(() => {});
+  return p;
+}
+
+const rutaFoto = (clave) => CONFIG.CARPETA_FOTOS + "/" + clave + ".jpg";
+const conVersion = (ruta) => ruta + "?v=" + Date.now();
+const esRutaGitHub = (ruta) => typeof ruta === "string" && ruta.startsWith(CONFIG.CARPETA_FOTOS + "/");
+
+function urlRepo(cfg){
+  return "https://api.github.com/repos/" + encodeURIComponent(cfg.owner) + "/" + encodeURIComponent(cfg.repo);
+}
+function urlContenido(cfg, ruta){
+  return urlRepo(cfg) + "/contents/" + ruta.split("/").map(encodeURIComponent).join("/");
+}
+
+function llamarGitHub(cfg, metodo, url, cuerpo){
+  const cabeceras = {
+    Authorization: "Bearer " + cfg.token,
+    Accept: "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+  if (cuerpo) cabeceras["Content-Type"] = "application/json";
+  return fetch(url, {
+    method: metodo, cache: "no-store", headers: cabeceras,
+    body: cuerpo ? JSON.stringify(cuerpo) : undefined
+  });
+}
+
+// Traduce los errores de la API de GitHub a mensajes claros
+function mensajeGitHub(resp, datos){
+  const msg = (datos && datos.message) || "";
+  if (resp.status === 401) return "El token de GitHub no es válido o ya venció.";
+  if (/rate limit/i.test(msg) || resp.status === 429) return "GitHub pidió una pausa por exceso de subidas. Espera unos minutos.";
+  if (resp.status === 403) return "El token no tiene permiso de escritura en el repositorio.";
+  if (resp.status === 404) return "No se encontró el repositorio o la rama. Revisa la configuración.";
+  return msg || "Error de GitHub (" + resp.status + ").";
+}
+
+// Devuelve el sha del archivo si ya existe (necesario para sobrescribirlo o borrarlo)
+async function obtenerSha(cfg, ruta){
+  const url = urlContenido(cfg, ruta) + (cfg.rama ? "?ref=" + encodeURIComponent(cfg.rama) : "");
+  const r = await llamarGitHub(cfg, "GET", url);
+  if (r.status === 404) return null;
+  const datos = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(mensajeGitHub(r, datos));
+  return datos.sha || null;
+}
+
+function aBase64(blob){
+  return new Promise((ok, mal) => {
+    const lector = new FileReader();
+    lector.onload = () => ok(String(lector.result).split(",")[1]);
+    lector.onerror = () => mal(new Error("No se pudo leer la imagen"));
+    lector.readAsDataURL(blob);
+  });
+}
+
+// Crea o sobrescribe un archivo en el repositorio (reintenta una vez si el sha cambió)
+async function guardarEnGitHub(ruta, blob, mensaje){
+  const cfg = GitHub.leer();
+  if (!cfg) throw new Error("GitHub no está configurado.");
+  const contenido = await aBase64(blob);
+  return enSerie(async () => {
+    for (let intento = 0; intento < 2; intento++){
+      const sha = await obtenerSha(cfg, ruta);
+      const cuerpo = { message: mensaje, content: contenido };
+      if (sha) cuerpo.sha = sha;
+      if (cfg.rama) cuerpo.branch = cfg.rama;
+      const r = await llamarGitHub(cfg, "PUT", urlContenido(cfg, ruta), cuerpo);
+      if (r.ok) return;
+      const datos = await r.json().catch(() => ({}));
+      if ((r.status === 409 || r.status === 422) && intento === 0) continue;
+      throw new Error(mensajeGitHub(r, datos));
+    }
+  });
+}
+
+// Borra un archivo del repositorio (sin publicar: no hace falta redeploy)
+function borrarDeGitHub(ruta){
+  const cfg = GitHub.leer();
+  if (!cfg || !esRutaGitHub(ruta)) return Promise.resolve();
+  return enSerie(async () => {
+    const sha = await obtenerSha(cfg, ruta);
+    if (!sha) return;
+    const cuerpo = { message: "Eliminar " + ruta + " [skip netlify]", sha };
+    if (cfg.rama) cuerpo.branch = cfg.rama;
+    const r = await llamarGitHub(cfg, "DELETE", urlContenido(cfg, ruta), cuerpo);
+    if (!r.ok) throw new Error(mensajeGitHub(r, await r.json().catch(() => ({}))));
+  }).catch(err => console.warn("HABER'S · no se pudo borrar " + ruta + ":", err.message));
+}
+
+// Un solo commit "publicable" al final de un lote → Netlify hace un único deploy
+function publicarEnNetlify(cantidad){
+  const marca = new Blob([new Date().toISOString()], { type: "text/plain" });
+  return guardarEnGitHub(CONFIG.CARPETA_FOTOS + "/_publicado.txt", marca,
+    "Publicar " + cantidad + " foto" + (cantidad === 1 ? "" : "s") + " en el muestrario");
+}
+
+// Borra la foto anterior solo si ninguna otra tela la usa
+function borrarFotoSiHuerfana(ruta, idsExcluidos){
+  if (!esRutaGitHub(ruta)) return;
+  const enUso = Estado.todas.some(t => t.imagenRuta === ruta && !idsExcluidos.includes(t.id));
+  if (!enUso) borrarDeGitHub(ruta);
+}
+
+async function asignarFoto(telas, ruta, imagen){
+  await Promise.all(telas.map(t => updateDoc(doc(db, CONFIG.COLECCION, t.id), {
+    imagen, imagenRuta: ruta, actualizado: serverTimestamp()
+  })));
+  const ids = telas.map(t => t.id);
+  for (const t of telas){
+    if (t.imagenRuta && t.imagenRuta !== ruta) borrarFotoSiHuerfana(t.imagenRuta, ids);
+  }
+}
+
+// Vista previa local inmediata mientras Netlify publica el archivo
+function registrarPrevia(imagen, blob){
+  Previas.set(imagen, URL.createObjectURL(blob));
+}
+
+// Ejecuta tareas con un límite de concurrencia
+async function enCola(tareas, limite, alAvanzar){
+  let i = 0;
+  const trabajador = async () => {
+    while (i < tareas.length){
+      const tarea = tareas[i++];
+      await tarea();
+      alAvanzar();
+    }
+  };
+  await Promise.all(Array.from({ length: Math.min(limite, tareas.length) }, trabajador));
+}
+
+/* ------------------------ Indicador de progreso ------------------- */
+const Progreso = {
+  iniciar(titulo){
+    $("progreso").hidden = false;
+    $("progresoDetalle").innerHTML = "";
+    Progreso.avance(0, 1, titulo);
+  },
+  avance(hechos, total, mensaje){
+    $("progresoRelleno").style.width = (total ? Math.round(hechos / total * 100) : 0) + "%";
+    $("progresoTexto").textContent = mensaje;
+  },
+  detalle(lineas, mal){
+    const ul = $("progresoDetalle");
+    for (const l of lineas){
+      const li = document.createElement("li");
+      li.textContent = l;
+      if (mal) li.className = "mal";
+      ul.appendChild(li);
+    }
+  }
+};
+
+const esImagen = (f) => (f.type && f.type.startsWith("image/")) || /\.(jpe?g|png|webp|gif|heic|heif|avif)$/i.test(f.name);
+const plural = (n, s, p) => n + " " + (n === 1 ? s : p);
+
+// Agrupa archivos por serie normalizada (si llegan dos iguales, gana el último)
+function agruparPorSerie(archivos){
+  const porSerie = new Map();
+  const duplicados = [];
+  for (const f of archivos){
+    const clave = normalizar(f.name);
+    if (!clave) continue;
+    if (porSerie.has(clave)) duplicados.push(porSerie.get(clave).name);
+    porSerie.set(clave, f);
+  }
+  return { porSerie, duplicados };
+}
+
+const telasDeSerie = (clave) => Estado.todas.filter(t => t.serieNorm === clave);
+
+// Carga masiva: cada archivo se asigna a la(s) tela(s) cuya Serie coincide
+async function subirLote(archivos){
+  const imagenes = [...archivos].filter(esImagen);
+  if (!imagenes.length){ aviso("No se encontraron imágenes en lo que soltaste.", "mal"); return; }
+
+  if (!GitHub.leer()){
+    const usarZip = window.confirm(
+      "GitHub aún no está configurado en este navegador.\n\n" +
+      "Aceptar: generar un .zip con las fotos comprimidas para subirlas tú a la carpeta fotos/ del repositorio.\n" +
+      "Cancelar: configurar GitHub ahora."
+    );
+    if (usarZip) generarZip(imagenes); else abrirConfigGitHub();
+    return;
+  }
+
+  const { porSerie, duplicados } = agruparPorSerie(imagenes);
+  if (porSerie.size > CONFIG.LIMITE_SUGERIR_ZIP){
+    const usarZip = window.confirm(
+      "Vas a subir " + porSerie.size + " fotos. GitHub limita cuántos archivos se pueden crear por hora desde su API.\n\n" +
+      "Aceptar: generar un .zip (recomendado para cargas grandes).\nCancelar: subirlas una por una de todos modos."
+    );
+    if (usarZip){ generarZip(imagenes); return; }
+  }
+
+  const sinCoincidencia = [], errores = [], tareas = [];
+  let listos = 0, hechos = 0;
+  for (const [clave, archivo] of porSerie){
+    const destinos = telasDeSerie(clave);
+    if (!destinos.length){ sinCoincidencia.push(archivo.name); continue; }
+    tareas.push(async () => {
+      try{
+        const ruta = rutaFoto(clave);
+        const blob = await comprimir(archivo);
+        await guardarEnGitHub(ruta, blob, "Foto serie " + destinos[0].serie + " [skip netlify]");
+        const imagen = conVersion(ruta);
+        registrarPrevia(imagen, blob);
+        await asignarFoto(destinos, ruta, imagen);
+        listos++;
+      }catch(err){
+        console.error(archivo.name, err);
+        errores.push(archivo.name + " (" + err.message + ")");
+      }
+    });
+  }
+
+  const total = tareas.length;
+  Progreso.iniciar("Preparando " + plural(total, "foto", "fotos") + "…");
+  await enCola(tareas, CONFIG.COMPRESIONES_SIMULTANEAS, () => {
+    hechos++;
+    Progreso.avance(hechos, total, "Subiendo a GitHub " + hechos + " de " + total + "…");
+  });
+
+  if (listos > 0){
+    try{ await publicarEnNetlify(listos); }
+    catch(err){ errores.push("Publicación en Netlify (" + err.message + ")"); }
+  }
+
+  Progreso.avance(1, 1, "✓ " + plural(listos, "foto subida", "fotos subidas") +
+    (listos ? ". Netlify las publicará en 1–2 minutos." : "."));
+  if (sinCoincidencia.length) Progreso.detalle(["Sin serie que coincida (" + sinCoincidencia.length + "): " + sinCoincidencia.join(", ")], true);
+  if (errores.length) Progreso.detalle(["No se pudieron subir (" + errores.length + "): " + errores.join(", ")], true);
+  if (duplicados.length) Progreso.detalle(["Omitidas por serie repetida: " + duplicados.join(", ")]);
+}
+
+// Foto para una sola fila (clic en la miniatura o soltar sobre la fila)
+async function subirParaFila(id, archivo){
+  const t = Estado.porId.get(id);
+  if (!t) return;
+  if (!esImagen(archivo)){ aviso("Ese archivo no es una imagen.", "mal"); return; }
+  if (!t.serieNorm){ aviso("Escribe primero la Serie de esta fila.", "mal"); return; }
+  if (!GitHub.leer()){ aviso("Primero configura GitHub para subir fotos.", "mal"); abrirConfigGitHub(); return; }
+
+  const tr = Admin.filas.get(id);
+  const boton = tr && tr.querySelector(".mini-foto");
+  if (boton) boton.classList.add("subiendo");
+  try{
+    const ruta = rutaFoto(t.serieNorm);
+    const blob = await comprimir(archivo);
+    await guardarEnGitHub(ruta, blob, "Foto serie " + t.serie);   // sin [skip]: publica de inmediato
+    const imagen = conVersion(ruta);
+    registrarPrevia(imagen, blob);
+    await asignarFoto([t], ruta, imagen);
+    aviso("Foto subida · Serie " + t.serie + " · se publicará en 1–2 minutos", "bien");
+  }catch(err){
+    console.error(err);
+    aviso("No se pudo subir la foto: " + err.message, "mal");
+  }finally{
+    if (boton) boton.classList.remove("subiendo");
+  }
+}
+
+/* ------------------ Respaldo: ZIP de fotos comprimidas ------------ */
+function descargarArchivo(blob, nombre){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url; a.download = nombre;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+}
+
+async function asignarEnLote(asignaciones){
+  // asignaciones: [{ clave, destinos }]
+  const marca = Date.now();
+  const operaciones = [];
+  for (const { clave, destinos } of asignaciones){
+    const ruta = rutaFoto(clave);
+    for (const t of destinos) operaciones.push([t.id, ruta, ruta + "?v=" + marca]);
+  }
+  for (let i = 0; i < operaciones.length; i += 400){
+    const lote = writeBatch(db);
+    for (const [id, ruta, imagen] of operaciones.slice(i, i + 400)){
+      lote.update(doc(db, CONFIG.COLECCION, id), { imagen, imagenRuta: ruta, actualizado: serverTimestamp() });
+    }
+    await lote.commit();
+  }
+  return operaciones.length;
+}
+
+// Comprime las fotos y las entrega en fotos-habers.zip (carpeta fotos/ lista para GitHub)
+async function generarZip(archivos){
+  const imagenes = [...archivos].filter(esImagen);
+  if (!imagenes.length){ aviso("No se encontraron imágenes.", "mal"); return; }
+  const btn = $("btnZip");
+  btn.disabled = true;
+  try{
+    const { porSerie, duplicados } = agruparPorSerie(imagenes);
+    const total = porSerie.size;
+    Progreso.iniciar("Preparando " + plural(total, "foto", "fotos") + " para el .zip…");
+    await cargarScript(CONFIG.JSZIP_URL);          // JSZip solo se descarga si se usa
+    const zip = new JSZip();
+    const carpeta = zip.folder(CONFIG.CARPETA_FOTOS);
+    const asignables = [], sinCoincidencia = [], errores = [];
+    let hechos = 0;
+
+    const tareas = [...porSerie].map(([clave, archivo]) => async () => {
+      try{
+        carpeta.file(clave + ".jpg", await comprimir(archivo));
+        const destinos = telasDeSerie(clave);
+        if (destinos.length) asignables.push({ clave, destinos });
+        else sinCoincidencia.push(archivo.name);
+      }catch(err){ errores.push(archivo.name); }
+    });
+    await enCola(tareas, CONFIG.COMPRESIONES_SIMULTANEAS, () => {
+      hechos++;
+      Progreso.avance(hechos, total, "Comprimiendo " + hechos + " de " + total + "…");
+    });
+
+    Progreso.avance(total, total, "Generando el archivo .zip…");
+    const blobZip = await zip.generateAsync({ type: "blob", compression: "STORE" }); // JPG ya viene comprimido
+    descargarArchivo(blobZip, "fotos-habers.zip");
+    const enZip = total - errores.length;
+    Progreso.avance(1, 1, "✓ .zip descargado con " + plural(enZip, "foto", "fotos") + " (" + Math.round(blobZip.size / 1024 / 1024 * 10) / 10 + " MB).");
+
+    if (asignables.length && window.confirm(
+      plural(asignables.length, "foto coincide", "fotos coinciden") + " con telas del catálogo.\n\n" +
+      "¿Asignarlas ya en el catálogo? Se verán en cuanto subas la carpeta fotos/ a GitHub."
+    )){
+      const n = await asignarEnLote(asignables);
+      Progreso.detalle(["✓ " + plural(n, "tela actualizada", "telas actualizadas") + " con su foto."]);
+    }
+    Progreso.detalle(["Siguiente paso: descomprime el .zip y arrastra la carpeta fotos/ a tu repositorio en github.com (Add file → Upload files)."]);
+    if (sinCoincidencia.length) Progreso.detalle(["Incluidas en el .zip pero sin serie en el catálogo (" + sinCoincidencia.length + "): " + sinCoincidencia.join(", ")], true);
+    if (errores.length) Progreso.detalle(["No se pudieron comprimir: " + errores.join(", ")], true);
+    if (duplicados.length) Progreso.detalle(["Omitidas por serie repetida: " + duplicados.join(", ")]);
+  }catch(err){
+    console.error(err);
+    aviso("No se pudo generar el .zip: " + err.message, "mal");
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+/* ------------------------ Configuración de GitHub ----------------- */
+const ghFondo = $("ghFondo");
+
+function actualizarEstadoGitHub(){
+  const cfg = GitHub.leer();
+  const el = $("estadoGitHub");
+  el.className = "estado-gh " + (cfg ? "ok" : "no");
+  el.textContent = cfg
+    ? "Fotos → GitHub: " + cfg.owner + "/" + cfg.repo + (cfg.rama ? " (" + cfg.rama + ")" : "")
+    : "GitHub sin configurar en este navegador · puedes generar un .zip";
+}
+
+function abrirConfigGitHub(){
+  const c = GitHub.leer() || {};
+  $("ghOwner").value = c.owner || "";
+  $("ghRepo").value = c.repo || "";
+  $("ghRama").value = c.rama || "";
+  $("ghToken").value = c.token || "";
+  $("errorGitHub").textContent = "";
+  ghFondo.classList.add("abierto");
+  setTimeout(() => $("ghOwner").focus(), 50);
+}
+function cerrarConfigGitHub(){ ghFondo.classList.remove("abierto"); }
+
+// Acepta "usuario", "usuario/repo" o la URL completa del repositorio
+function interpretarRepo(owner, repo){
+  const limpio = owner.replace(/^https?:\/\/(www\.)?github\.com\//i, "").replace(/\.git$/i, "").replace(/\/+$/, "");
+  if (!repo && limpio.includes("/")){
+    const [o, r] = limpio.split("/");
+    return { owner: o, repo: r };
+  }
+  return { owner: limpio, repo: repo.replace(/\.git$/i, "") };
+}
+
+$("btnConfigGH").addEventListener("click", abrirConfigGitHub);
+$("cerrarGitHub").addEventListener("click", cerrarConfigGitHub);
+ghFondo.addEventListener("click", e => { if (e.target === ghFondo) cerrarConfigGitHub(); });
+
+$("formGitHub").addEventListener("submit", async e => {
+  e.preventDefault();
+  const { owner, repo } = interpretarRepo($("ghOwner").value.trim(), $("ghRepo").value.trim());
+  const rama = $("ghRama").value.trim();
+  const token = $("ghToken").value.trim();
+  const error = $("errorGitHub");
+  if (!owner || !repo || !token){ error.textContent = "Completa usuario, repositorio y token."; return; }
+
+  const btn = $("btnGuardarGH");
+  btn.disabled = true; btn.textContent = "Probando conexión…";
+  try{
+    const cfg = { owner, repo, rama, token };
+    const r = await llamarGitHub(cfg, "GET", urlRepo(cfg));
+    const datos = await r.json().catch(() => ({}));
+    if (!r.ok){ error.textContent = mensajeGitHub(r, datos); return; }
+    if (datos.permissions && datos.permissions.push === false){
+      error.textContent = "Tu cuenta no tiene permiso de escritura en ese repositorio."; return;
+    }
+    if (rama){
+      const rb = await llamarGitHub(cfg, "GET", urlRepo(cfg) + "/branches/" + encodeURIComponent(rama));
+      if (!rb.ok){ error.textContent = 'No existe la rama "' + rama + '" en el repositorio.'; return; }
+    }
+    GitHub.guardar({ owner: datos.owner ? datos.owner.login : owner, repo: datos.name || repo, rama, token });
+    actualizarEstadoGitHub();
+    cerrarConfigGitHub();
+    aviso("GitHub conectado: " + owner + "/" + repo, "bien");
+  }catch(err){
+    error.textContent = "No se pudo conectar con GitHub. Revisa tu internet.";
+  }finally{
+    btn.disabled = false; btn.textContent = "Probar y guardar";
+  }
+});
+
+$("btnBorrarGH").addEventListener("click", () => {
+  GitHub.borrar();
+  for (const id of ["ghOwner", "ghRepo", "ghRama", "ghToken"]) $(id).value = "";
+  actualizarEstadoGitHub();
+  aviso("Datos de GitHub borrados de este navegador");
+});
+
+$("btnZip").addEventListener("click", () => $("inputZip").click());
+$("inputZip").addEventListener("change", e => {
+  const archivos = [...e.target.files];
+  e.target.value = "";
+  if (archivos.length) generarZip(archivos);
+});
+
+// Miniaturas del panel aún no publicadas por Netlify: se muestra un indicador
+tbody.addEventListener("error", e => {
+  const img = e.target;
+  if (img.tagName !== "IMG") return;
+  const boton = img.closest(".mini-foto");
+  if (boton) boton.innerHTML = '<span title="Aún no publicada en el sitio" aria-hidden="true">⏳</span>';
+}, true);
+
+/* ------------------------- Arrastrar y soltar --------------------- */
+const zona = $("zonaCarga");
+
+zona.addEventListener("click", () => $("inputFotos").click());
+zona.addEventListener("keydown", e => {
+  if (e.key === "Enter" || e.key === " "){ e.preventDefault(); $("inputFotos").click(); }
+});
+$("inputFotos").addEventListener("change", e => {
+  const archivos = [...e.target.files];
+  e.target.value = "";
+  if (archivos.length) subirLote(archivos);
+});
+
+["dragenter", "dragover"].forEach(tipo => zona.addEventListener(tipo, e => {
+  e.preventDefault();
+  zona.classList.add("encima");
+}));
+["dragleave", "drop"].forEach(tipo => zona.addEventListener(tipo, () => zona.classList.remove("encima")));
+zona.addEventListener("drop", e => {
+  e.preventDefault();
+  if (e.dataTransfer.files.length) subirLote(e.dataTransfer.files);
+});
+
+// Soltar una foto sobre una fila concreta
+let filaResaltada = null;
+function resaltarFila(tr){
+  if (filaResaltada === tr) return;
+  if (filaResaltada) filaResaltada.classList.remove("soltar");
+  filaResaltada = tr;
+  if (tr) tr.classList.add("soltar");
+}
+tbody.addEventListener("dragover", e => {
+  const tr = e.target.closest("tr[data-id]");
+  if (!tr) return;
+  e.preventDefault();
+  resaltarFila(tr);
+});
+tbody.addEventListener("dragleave", e => {
+  if (!tbody.contains(e.relatedTarget)) resaltarFila(null);
+});
+tbody.addEventListener("drop", e => {
+  const tr = e.target.closest("tr[data-id]");
+  resaltarFila(null);
+  if (!tr) return;
+  e.preventDefault();
+  e.stopPropagation();
+  const archivo = [...e.dataTransfer.files].find(esImagen);
+  if (archivo) subirParaFila(tr.dataset.id, archivo);
+});
+
+// Evita que el navegador abra la foto si se suelta fuera de las zonas válidas
+["dragover", "drop"].forEach(tipo => window.addEventListener(tipo, e => {
+  if (Admin.abierto) e.preventDefault();
+}));
+
+/* ------------------------ Importación de CSV ---------------------- */
+$("btnImportar").addEventListener("click", () => $("inputCsv").click());
+$("inputCsv").addEventListener("change", async e => {
+  const archivo = e.target.files[0];
+  e.target.value = "";
+  if (archivo) importarCSV(archivo);
+});
+
+// Ubica columnas sin importar acentos, mayúsculas o espacios
+function mapearColumnas(campos){
+  const mapa = {};
+  for (const c of campos || []) mapa[normalizar(normalizarBusqueda(c))] = c;
+  const col = (...nombres) => nombres.map(n => mapa[n]).find(Boolean);
+  return {
+    serie: col("serie"), linea: col("linea"), color: col("color"),
+    mts: col("mts", "metros"), ancho: col("ancho"), estrellas: col("estrellas"),
+    proveedor: col("provedor", "proveedor")
+  };
+}
+
+const claveTela = (serieNorm, color) => serieNorm + "|" + normalizarBusqueda(color);
+
+async function importarCSV(archivo){
+  const btn = $("btnImportar");
+  btn.disabled = true;
+  try{
+    await cargarScript(CONFIG.PAPA_URL);   // PapaParse solo se descarga al importar
+    const { data, meta } = Papa.parse(await archivo.text(), { header: true, skipEmptyLines: true });
+    const col = mapearColumnas(meta.fields);
+    if (!col.serie){ aviso('El CSV no tiene una columna "Serie".', "mal"); return; }
+
+    const leer = (fila, c) => c ? texto(fila[c]) : "";
+    const filas = data.map(f => ({
+      serie: leer(f, col.serie), linea: leer(f, col.linea), color: leer(f, col.color),
+      mts: leer(f, col.mts), ancho: leer(f, col.ancho),
+      estrellas: estrellasValidas(leer(f, col.estrellas)),
+      proveedor: leer(f, col.proveedor)
+    })).filter(f => f.serie || f.linea || f.color);
+
+    if (!filas.length){ aviso("El CSV no contiene telas.", "mal"); return; }
+
+    // Las telas ya existentes (misma serie y color) se actualizan en lugar de duplicarse
+    const existentes = new Map();
+    for (const t of Estado.todas) existentes.set(claveTela(t.serieNorm, t.color), t.id);
+    const nuevas = filas.filter(f => !existentes.has(claveTela(normalizar(f.serie), f.color))).length;
+
+    const ok = window.confirm(
+      "Se importarán " + filas.length + " telas:\n" +
+      "· " + nuevas + " nuevas\n" +
+      "· " + (filas.length - nuevas) + " existentes se actualizarán\n\n" +
+      "Las fotos no se modifican. ¿Continuar?"
+    );
+    if (!ok) return;
+
+    Progreso.iniciar("Importando " + filas.length + " telas…");
+    let hechas = 0;
+    for (let i = 0; i < filas.length; i += CONFIG.FILAS_POR_LOTE_CSV){
+      const lote = writeBatch(db);
+      for (const f of filas.slice(i, i + CONFIG.FILAS_POR_LOTE_CSV)){
+        const serieNorm = normalizar(f.serie);
+        const id = existentes.get(claveTela(serieNorm, f.color));
+        const ref = id ? doc(db, CONFIG.COLECCION, id) : doc(collection(db, CONFIG.COLECCION));
+        lote.set(ref, {
+          serie: f.serie, linea: f.linea, color: f.color, mts: f.mts, ancho: f.ancho,
+          estrellas: f.estrellas, serieNorm, actualizado: serverTimestamp()
+        }, { merge: true });
+        if (f.proveedor) lote.set(doc(db, CONFIG.COLECCION_PRIVADA, ref.id), { proveedor: f.proveedor }, { merge: true });
+      }
+      await lote.commit();
+      hechas = Math.min(i + CONFIG.FILAS_POR_LOTE_CSV, filas.length);
+      Progreso.avance(hechas, filas.length, "Importando " + hechas + " de " + filas.length + "…");
+    }
+    Progreso.avance(1, 1, "✓ Importación completa: " + filas.length + " telas.");
+    aviso("Importación completa", "bien");
+  }catch(err){
+    console.error(err);
+    aviso("No se pudo importar el CSV: " + (err.message || "error desconocido"), "mal");
+  }finally{
+    btn.disabled = false;
+  }
+}
+
+/* =====================================================================
+   TECLA ESCAPE (un solo listener para todos los modales)
+===================================================================== */
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (visorFondo.classList.contains("abierto")) cerrarVisor();
+  else if (ghFondo.classList.contains("abierto")) cerrarConfigGitHub();
+  else if (loginFondo.classList.contains("abierto")) cerrarLogin();
+  else if (modalFondo.classList.contains("abierto")) cerrarModal();
+});
+
+/* =====================================================================
+   ARRANQUE
+===================================================================== */
+observadorScroll.observe(sentinela);
+
+if (configCompleta){
+  iniciarFirebase();
+  escucharCatalogo();
+}else{
+  console.warn("HABER'S · faltan las credenciales de Firebase (const firebaseConfig).");
+  mostrarEstado("Muestrario en configuración", "Pronto estará disponible.");
+}
+</script>
+</body>
+</html>
